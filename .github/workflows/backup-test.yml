@@ -92,4 +92,4 @@ jobs:
         with:
           token: ${{ secrets.GH_TOKEN }}
           repository: BenjiThatFoxGuy/actions
-          event-type: cleanup
+          event-type: deploy
