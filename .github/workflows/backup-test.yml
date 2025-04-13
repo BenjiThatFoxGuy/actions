@@ -28,7 +28,7 @@ jobs:
           rclone_config: ${{ secrets.RCLONE_CONFIG_B64 }}
       - name: Sync IA via rclone
         run: |
-          rclone sync teldrive-cloud:Downloads/e621/zazush-una ia2:e621_zazush-una -P -v -v --retries 10 --max-duration 10m --max-transfer 10M --low-level-retries 3 --internetarchive-wait-archive 30s --track-renames --check-first --checkers 10 --transfers 10 --metadata --cutoff-mode soft --metadata-exclude \"source=metadata\" --metadata-exclude \"format=Metadata\" --check-first --exclude=\"__ia_thumb.jpg\" --exclude=\"___ia_thumb.jpg\" --tpslimit=0.9 --tpslimit-burst=3 --timeout=1h
+          rclone sync teldrive-cloud:Downloads/e621/zazush-una ia2:e621_zazush-una --retries 10 --max-duration 10m --max-transfer 10M --low-level-retries 3 --internetarchive-wait-archive 30s --track-renames --check-first --checkers 10 --transfers 10 --metadata --cutoff-mode soft --metadata-exclude \"source=metadata\" --metadata-exclude \"format=Metadata\" --check-first --exclude=\"__ia_thumb.jpg\" --exclude=\"___ia_thumb.jpg\" --tpslimit=0.9 --tpslimit-burst=3 --timeout=1h
       - name: Dispatch Cleanup
         uses: peter-evans/repository-dispatch@v3
         with:
@@ -47,7 +47,7 @@ jobs:
           rclone_config: ${{ secrets.RCLONE_CONFIG_B64 }}
       - name: Sync iCloud via rclone
         run: |
-          rclone sync icloud:/Substance teldrive-cloud:/Substance -P -v -v --retries 10 --max-duration 10m --max-transfer 1G --low-level-retries 3 --track-renames --check-first --checkers 10 --transfers 4 --metadata --cutoff-mode soft --metadata-exclude \"source=metadata\" --metadata-exclude \"format=Metadata\" --check-first --exclude=\"__ia_thumb.jpg\" --exclude=\"___ia_thumb.jpg\" --timeout=1h
+          rclone sync icloud:/Substance teldrive-cloud:/Substance --retries 10 --max-duration 10m --max-transfer 1G --low-level-retries 3 --track-renames --check-first --checkers 10 --transfers 4 --metadata --cutoff-mode soft --metadata-exclude \"source=metadata\" --metadata-exclude \"format=Metadata\" --check-first --exclude=\"__ia_thumb.jpg\" --exclude=\"___ia_thumb.jpg\" --timeout=1h
       - name: Dispatch Cleanup
         uses: peter-evans/repository-dispatch@v3
         with:
