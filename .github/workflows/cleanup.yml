@@ -1,4 +1,4 @@
-name: Cleanup
+name: Deploy
 
 on:
   schedule:
@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
   repository_dispatch:
     types:
-      - cleanup
+      - deploy
 
 permissions:
   contents: write
