@@ -27,7 +27,7 @@ jobs:
           rclone_config: ${{ secrets.RCLONE_CONFIG_B64 }}
       - name: Sync via rclone
         run: |
-          rclone sync teldrive-cloud:Downloads/e621/zazush-una ia2:e621_zazush-una --max-duration 10m --internetarchive-wait-archive 30s --track-renames --check-first --checkers 4 --transfers 4 --metadata --cutoff-mode soft --metadata-exclude \"source=metadata\" --metadata-exclude \"format=Metadata\" --check-first --exclude=\"__ia_thumb.jpg\" --exclude=\"___ia_thumb.jpg\" --tpslimit=0.2 --tpslimit-burst=1 --timeout=1h
+          rclone sync teldrive-cloud:Downloads/e621/zazush-una ia2:e621_zazush-una -P -v -v --max-duration 10m --internetarchive-wait-archive 30s --track-renames --check-first --checkers 4 --transfers 4 --metadata --cutoff-mode soft --metadata-exclude \"source=metadata\" --metadata-exclude \"format=Metadata\" --check-first --exclude=\"__ia_thumb.jpg\" --exclude=\"___ia_thumb.jpg\" --tpslimit=0.2 --tpslimit-burst=1 --timeout=1h
   trigger-cleanup:
     runs-on: ubuntu-latest
     needs: sync
