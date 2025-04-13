@@ -1,0 +1,42 @@
+name: Backup Test
+
+on:
+  schedule:
+    - cron: "0 0 * * 0"  # Runs every Sunday at midnight; adjust as needed
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/backup-test.yml
+  workflow_dispatch:
+
+# Allow one concurrent deployment
+concurrency:
+  group: backup-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Setup Rclone
+        uses: BenjiThatFoxGuy/setup-tclone@v1
+        with:
+          rclone_config: ${{ secrets.RCLONE_CONFIG_B64 }}
+      - name: Sync via rclone
+        run: |
+          rclone sync teldrive-cloud:Downloads/e621/zazush-una ia2:e621_zazush-una --max-duration 10m --internetarchive-wait-archive 30s --track-renames --check-first --checkers 4 --transfers 4 --metadata --cutoff-mode soft --metadata-exclude \"source=metadata\" --metadata-exclude \"format=Metadata\" --check-first --exclude=\"__ia_thumb.jpg\" --exclude=\"___ia_thumb.jpg\" --tpslimit=0.2 --tpslimit-burst=1 --timeout=1h
+  trigger-cleanup:
+    runs-on: ubuntu-latest
+    needs: sync
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Dispatch Cleanup
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          repository: BenjiThatFoxGuy/actions
+          event-type: cleanup
