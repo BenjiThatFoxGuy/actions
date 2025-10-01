@@ -1,0 +1,234 @@
+name: Backup Archive
+
+on:
+  schedule:
+    - cron: "0 0 * * 0"  # Runs every Sunday at midnight; adjust as needed
+    # - cron: "0 0 1 * *"  # Runs on the first day of every month at midnight; adjust as needed
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/backup-archive.yml
+  workflow_dispatch:
+
+concurrency:
+  group: backup-archive
+  cancel-in-progress: true
+
+jobs:
+  sync1:
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Setup Rclone
+        uses: BenjiThatFoxGuy/setup-bclone@v1
+        with:
+          rclone_config: ${{ secrets.RCLONE_CONFIG_B64 }}
+      - name: Sync IA via rclone [1/6]
+        continue-on-error: true
+        run: |
+          rclone copy ia2:smolvix69-file-share teldrive-cloud:"Public/Archive" --teldrive-channel-id=-1002417260878 --teldrive-encrypt-files=0 --teldrive-random-chunk-name=0 --retries 10 --max-duration 30m --max-transfer 5G --low-level-retries 3 --internetarchive-wait-archive 30s --track-renames --check-first --checkers 10 --transfers 10 --metadata --cutoff-mode soft --metadata-exclude "source=metadata" --metadata-exclude "format=Metadata" --check-first --exclude="__ia_thumb.jpg" --exclude="___ia_thumb.jpg" --exclude="*.thumbs/**" --exclude="*_thumb.*" --tpslimit=0.9 --tpslimit-burst=3 --timeout=1h
+      - name: Dispatch Cleanup
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          repository: BenjiThatFoxGuy/actions
+          event-type: cleanup
+
+  sync2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Setup Rclone
+        uses: BenjiThatFoxGuy/setup-bclone@v1
+        with:
+          rclone_config: ${{ secrets.RCLONE_CONFIG_B64 }}
+      - name: Sync IA via rclone [2/6]
+        continue-on-error: true
+        run: |
+          rclone sync ia2:smolvix69-file-share ia2:smolvix-file-share --retries 10 --max-duration 30m --max-transfer 5G --low-level-retries 3 --internetarchive-wait-archive 30s --track-renames --check-first --checkers 10 --transfers 10 --metadata --cutoff-mode soft --metadata-exclude "source=metadata" --metadata-exclude "format=Metadata" --check-first --exclude="__ia_thumb.jpg" --exclude="___ia_thumb.jpg" --exclude="*.thumbs/**" --exclude="*_thumb.*" --tpslimit=0.9 --tpslimit-burst=3 --timeout=1h
+      - name: Dispatch Cleanup
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          repository: BenjiThatFoxGuy/actions
+          event-type: cleanup
+
+  sync3:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Setup Rclone
+        uses: BenjiThatFoxGuy/setup-bclone@v1
+        with:
+          rclone_config: ${{ secrets.RCLONE_CONFIG_B64 }}
+      - name: Sync IA via rclone [3/6]
+        continue-on-error: true
+        run: |
+          rclone sync ia2:smolvix69-file-share ia2:smolvixfile-share --retries 10 --max-duration 30m --max-transfer 5G --low-level-retries 3 --internetarchive-wait-archive 30s --track-renames --check-first --checkers 10 --transfers 10 --metadata --cutoff-mode soft --metadata-exclude "source=metadata" --metadata-exclude "format=Metadata" --check-first --exclude="__ia_thumb.jpg" --exclude="___ia_thumb.jpg" --exclude="*.thumbs/**" --exclude="*_thumb.*" --tpslimit=0.9 --tpslimit-burst=3 --timeout=1h
+      - name: Dispatch Cleanup
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          repository: BenjiThatFoxGuy/actions
+          event-type: cleanup
+
+  sync4:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Setup Rclone
+        uses: BenjiThatFoxGuy/setup-bclone@v1
+        with:
+          rclone_config: ${{ secrets.RCLONE_CONFIG_B64 }}
+      - name: Sync IA via rclone [4/6]
+        continue-on-error: true
+        run: |
+          rclone sync ia2:smolvix69-file-share ia3:botfile-share --retries 10 --max-duration 30m --max-transfer 5G --low-level-retries 3 --internetarchive-wait-archive 30s --track-renames --check-first --checkers 10 --transfers 10 --metadata --cutoff-mode soft --metadata-exclude "source=metadata" --metadata-exclude "format=Metadata" --check-first --exclude="__ia_thumb.jpg" --exclude="___ia_thumb.jpg" --exclude="*.thumbs/**" --exclude="*_thumb.*" --tpslimit=0.9 --tpslimit-burst=3 --timeout=1h
+      - name: Dispatch Cleanup
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          repository: BenjiThatFoxGuy/actions
+          event-type: cleanup
+
+  sync5:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: sync4
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Setup Rclone
+        uses: BenjiThatFoxGuy/setup-bclone@v1
+        with:
+          rclone_config: ${{ secrets.RCLONE_CONFIG_B64 }}
+      - name: Sync IA via rclone [5/6]
+        continue-on-error: true
+        run: |
+          rclone copy ia3:botfile-share ia3:InternetArchiveDirectLink_bot-uploads --retries 10 --max-duration 30m --max-transfer 5G --low-level-retries 3 --internetarchive-wait-archive 30s --track-renames --check-first --checkers 10 --transfers 10 --metadata --cutoff-mode soft --metadata-exclude "source=metadata" --metadata-exclude "format=Metadata" --check-first --exclude="__ia_thumb.jpg" --exclude="___ia_thumb.jpg" --exclude="*.thumbs/**" --exclude="*_thumb.*" --tpslimit=0.9 --tpslimit-burst=3 --timeout=1h
+      - name: Dispatch Cleanup
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          repository: BenjiThatFoxGuy/actions
+          event-type: cleanup
+
+  sync6:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Setup Rclone
+        uses: BenjiThatFoxGuy/setup-bclone@v1
+        with:
+          rclone_config: ${{ secrets.RCLONE_CONFIG_B64 }}
+      - name: Sync IA via rclone [6/6]
+        continue-on-error: true
+        run: |
+          rclone copy ia2:smolvix69-file-share ia2:smolvix69-public --retries 10 --max-duration 30m --max-transfer 5G --low-level-retries 3 --internetarchive-wait-archive 30s --track-renames --check-first --checkers 10 --transfers 10 --metadata --cutoff-mode soft --metadata-exclude "source=metadata" --metadata-exclude "format=Metadata" --check-first --exclude="__ia_thumb.jpg" --exclude="___ia_thumb.jpg" --exclude="*.thumbs/**" --exclude="*_thumb.*" --tpslimit=0.9 --tpslimit-burst=3 --timeout=1h
+      - name: Dispatch Cleanup
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          repository: BenjiThatFoxGuy/actions
+          event-type: cleanup
+
+  trigger-cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Dispatch Cleanup
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          repository: BenjiThatFoxGuy/actions
+          event-type: cleanup
+
+  trigger-cleanup1:
+    runs-on: ubuntu-latest
+    needs: sync1
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Dispatch Cleanup
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          repository: BenjiThatFoxGuy/actions
+          event-type: cleanup
+
+  trigger-cleanup2:
+    runs-on: ubuntu-latest
+    needs: sync2
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Dispatch Cleanup
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          repository: BenjiThatFoxGuy/actions
+          event-type: cleanup
+
+  trigger-cleanup3:
+    runs-on: ubuntu-latest
+    needs: sync3
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Dispatch Cleanup
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          repository: BenjiThatFoxGuy/actions
+          event-type: cleanup
+
+  trigger-cleanup4:
+    runs-on: ubuntu-latest
+    needs: sync4
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Dispatch Cleanup
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          repository: BenjiThatFoxGuy/actions
+          event-type: cleanup
+
+  trigger-cleanup5:
+    runs-on: ubuntu-latest
+    needs: sync5
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Dispatch Cleanup
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          repository: BenjiThatFoxGuy/actions
+          event-type: cleanup
+
+  trigger-cleanup6:
+    runs-on: ubuntu-latest
+    needs: sync6
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Dispatch Cleanup
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          repository: BenjiThatFoxGuy/actions
+          event-type: cleanup
